@@ -1,27 +1,20 @@
 package io.github.maxsouldrake.filmoteka.film.repository;
 
+import io.github.maxsouldrake.filmoteka.config.RepositoryTestConfig;
 import io.github.maxsouldrake.filmoteka.film.Film;
 import io.github.maxsouldrake.filmoteka.film.FilmRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@Testcontainers
+@DataJpaTest
+@Import(RepositoryTestConfig.class)
 class FilmRepositoryTest {
-
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer<?> postgreSQLContainer =
-            new PostgreSQLContainer<>("postgres:17");
 
     @Autowired
     private FilmRepository filmRepository;
