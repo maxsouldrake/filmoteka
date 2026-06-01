@@ -1,4 +1,4 @@
-package io.github.maxsouldrake.filmoteka.film.entity;
+package io.github.maxsouldrake.filmoteka.film;
 
 public enum Genre {
     ACTION,

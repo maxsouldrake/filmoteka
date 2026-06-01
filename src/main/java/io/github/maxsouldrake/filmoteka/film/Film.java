@@ -1,7 +1,7 @@
-package io.github.maxsouldrake.filmoteka.film.entity;
+package io.github.maxsouldrake.filmoteka.film;
 
-import io.github.maxsouldrake.filmoteka.actor.entity.Actor;
-import io.github.maxsouldrake.filmoteka.director.entity.Director;
+import io.github.maxsouldrake.filmoteka.actor.Actor;
+import io.github.maxsouldrake.filmoteka.director.Director;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

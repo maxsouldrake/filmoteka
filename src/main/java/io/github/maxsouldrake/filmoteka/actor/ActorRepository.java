@@ -1,6 +1,5 @@
-package io.github.maxsouldrake.filmoteka.actor.repository;
+package io.github.maxsouldrake.filmoteka.actor;
 
-import io.github.maxsouldrake.filmoteka.actor.entity.Actor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ActorRepository extends JpaRepository<Actor, Long> {

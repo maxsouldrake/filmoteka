@@ -1,6 +1,6 @@
-package io.github.maxsouldrake.filmoteka.actor.entity;
+package io.github.maxsouldrake.filmoteka.director;
 
-import io.github.maxsouldrake.filmoteka.film.entity.Film;
+import io.github.maxsouldrake.filmoteka.film.Film;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,10 +12,10 @@ import java.util.Set;
 
 @Getter
 @Entity
-@Table(name = "actor")
+@Table(name = "director")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor
-public class Actor {
+public class Director {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,6 @@ public class Actor {
     @Column(name = "updated_ts")
     private LocalDateTime updatedTs;
 
-    @ManyToMany(mappedBy = "actors")
+    @ManyToMany(mappedBy = "directors")
     private Set<Film> films = new HashSet<>();
 }

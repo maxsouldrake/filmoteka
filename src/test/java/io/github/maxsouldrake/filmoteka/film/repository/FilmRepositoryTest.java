@@ -1,6 +1,7 @@
 package io.github.maxsouldrake.filmoteka.film.repository;
 
-import io.github.maxsouldrake.filmoteka.film.entity.Film;
+import io.github.maxsouldrake.filmoteka.film.Film;
+import io.github.maxsouldrake.filmoteka.film.FilmRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
