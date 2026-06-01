@@ -1,13 +1,3 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/filmoteka
-    username: ${FILMOTEKA_USERNAME}
-    password: ${FILMOTEKA_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-
-  test:
-    database:
-      replace: none
-
   flyway:
     enabled: true
