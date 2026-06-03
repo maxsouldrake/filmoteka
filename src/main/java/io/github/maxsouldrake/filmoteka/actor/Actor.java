@@ -11,10 +11,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "actor")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RequiredArgsConstructor
 public class Actor {
 
     @Id
@@ -34,4 +35,9 @@ public class Actor {
 
     @ManyToMany(mappedBy = "actors")
     private Set<Film> films = new HashSet<>();
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedTs = LocalDateTime.now();
+    }
 }
