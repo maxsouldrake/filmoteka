@@ -26,10 +26,8 @@ public record CreateFilmRequest(
         @NotNull
         Set<Genre> genres,
 
-        @NotNull
         Set<ActorRequest> actors,
 
-        @NotNull
         Set<DirectorRequest> directors
 ) {
 
