@@ -9,12 +9,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.NoSuchElementException;
+
 import static io.github.maxsouldrake.filmoteka.testdata.ActorTestData.ACTOR_NAME;
 import static io.github.maxsouldrake.filmoteka.testdata.DirectorTestData.DIRECTOR_NAME;
 import static io.github.maxsouldrake.filmoteka.testdata.FilmTestData.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,5 +53,25 @@ class FilmControllerTest {
                 .andExpect(jsonPath("$.directors[0].name").value(DIRECTOR_NAME));
 
         verify(filmService).create(any(CreateFilmRequest.class));
+    }
+
+    @Test
+    void shouldFindFilmById() throws Exception {
+        when(filmService.findById(FILM_ID)).thenReturn(detailedFilmResponse());
+
+        mockMvc.perform(get("/api/v1/films/{id}", FILM_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(FILM_ID))
+                .andExpect(jsonPath("$.title").value(FILM_TITLE))
+                .andExpect(jsonPath("$.releaseYear").value(RELEASE_YEAR));
+
+        verify(filmService).findById(FILM_ID);
+    }
+
+    @Test
+    void shouldThrowIfFilmNotFound() throws Exception {
+        when(filmService.findById(FILM_ID)).thenThrow(new NoSuchElementException());
+
+        mockMvc.perform(get("/films/{id}", FILM_ID)).andExpect(status().isNotFound());
     }
 }

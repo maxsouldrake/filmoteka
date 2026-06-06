@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +24,9 @@ public class FilmService {
         return filmRepository.findAll();
     }
 
-    public Optional<Film> findById(Long id) {
-        return filmRepository.findById(id);
+    public DetailedFilmResponse findById(Long id) {
+        Film film = filmRepository.findById(id).orElseThrow();
+        return filmMapper.filmToDetailedFilmResponse(film);
     }
 
     @Transactional
