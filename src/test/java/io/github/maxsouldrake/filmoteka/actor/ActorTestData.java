@@ -1,13 +1,11 @@
-package io.github.maxsouldrake.filmoteka.testdata;
+package io.github.maxsouldrake.filmoteka.actor;
 
-import io.github.maxsouldrake.filmoteka.actor.Actor;
 import io.github.maxsouldrake.filmoteka.actor.dto.ActorRequest;
 import io.github.maxsouldrake.filmoteka.actor.dto.ActorResponse;
 import io.github.maxsouldrake.filmoteka.actor.dto.DetailedActorResponse;
+import io.github.maxsouldrake.filmoteka.util.TestUtil;
 
-import java.util.Set;
-
-import static io.github.maxsouldrake.filmoteka.testdata.FilmTestData.filmResponse;
+import static io.github.maxsouldrake.filmoteka.film.FilmTestData.filmResponse;
 
 public class ActorTestData {
 
@@ -15,11 +13,15 @@ public class ActorTestData {
     public static final long ACTOR_ID = 1L;
 
     public static Actor actor() {
-        return Actor.builder().name(ACTOR_NAME).build();
+        Actor actor = new Actor();
+        actor.setName(ACTOR_NAME);
+        return actor;
     }
 
     public static Actor loadedActor() {
-        return Actor.builder().id(ACTOR_ID).name(ACTOR_NAME).build();
+        Actor actor = actor();
+        actor.setId(ACTOR_ID);
+        return actor;
     }
 
     public static ActorRequest actorRequest() {
@@ -34,7 +36,7 @@ public class ActorTestData {
         return new DetailedActorResponse(
                 ACTOR_ID,
                 ACTOR_NAME,
-                Set.of(filmResponse())
+                TestUtil.testSetOf(filmResponse())
         );
     }
 }

@@ -1,31 +1,25 @@
 package io.github.maxsouldrake.filmoteka.film;
 
 import io.github.maxsouldrake.filmoteka.actor.Actor;
+import io.github.maxsouldrake.filmoteka.common.BaseEntity;
 import io.github.maxsouldrake.filmoteka.director.Director;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "film", uniqueConstraints = @UniqueConstraint(
         columnNames = {"title", "release_year"}
 ))
-public class Film {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Film extends BaseEntity {
 
     private String title;
 
@@ -36,7 +30,6 @@ public class Film {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(100)[]")
-    @Builder.Default
     private Set<Genre> genres = new HashSet<>();
 
     @Column(columnDefinition = "text")
@@ -45,21 +38,12 @@ public class Film {
     @Column(name = "poster_url")
     private String posterUrl;
 
-    @CreationTimestamp
-    @Column(name = "created_ts", updatable = false)
-    private LocalDateTime createdTs;
-
-    @UpdateTimestamp
-    @Column(name = "updated_ts")
-    private LocalDateTime updatedTs;
-
     @ManyToMany
     @JoinTable(
             name = "film_actor",
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
-    @Builder.Default
     private Set<Actor> actors = new HashSet<>();
 
     @ManyToMany
@@ -68,13 +52,7 @@ public class Film {
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "director_id")
     )
-    @Builder.Default
     private Set<Director> directors = new HashSet<>();
-
-    @PreUpdate
-    public void preUpdate() {
-        updatedTs = LocalDateTime.now();
-    }
 
     public void addActor(Actor actor) {
         actors.add(actor);

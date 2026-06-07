@@ -1,6 +1,6 @@
 package io.github.maxsouldrake.filmoteka.film;
 
-import io.github.maxsouldrake.filmoteka.film.dto.CreateFilmRequest;
+import io.github.maxsouldrake.filmoteka.film.dto.FilmRequest;
 import io.github.maxsouldrake.filmoteka.film.dto.DetailedFilmResponse;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmResponse;
 import jakarta.validation.Valid;
@@ -26,8 +26,8 @@ public class FilmController {
     }
 
     @PostMapping
-    public ResponseEntity<DetailedFilmResponse> create(@RequestBody @Valid CreateFilmRequest request) {
-        DetailedFilmResponse response = filmService.create(request);
+    public ResponseEntity<DetailedFilmResponse> createFilm(@RequestBody @Valid FilmRequest request) {
+        DetailedFilmResponse response = filmService.createFilm(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

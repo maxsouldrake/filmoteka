@@ -1,0 +1,114 @@
+package io.github.maxsouldrake.filmoteka.film;
+
+import io.github.maxsouldrake.filmoteka.film.dto.DetailedFilmResponse;
+import io.github.maxsouldrake.filmoteka.film.dto.FilmRequest;
+import io.github.maxsouldrake.filmoteka.film.dto.FilmResponse;
+
+import static io.github.maxsouldrake.filmoteka.actor.ActorTestData.actorRequest;
+import static io.github.maxsouldrake.filmoteka.actor.ActorTestData.actorResponse;
+import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.directorRequest;
+import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.directorResponse;
+import static io.github.maxsouldrake.filmoteka.util.TestUtil.testSetOf;
+
+public class FilmTestData {
+
+    public static final long FILM_ID = 1L;
+    public static final String FILM_TITLE = "film title";
+    public static final int RELEASE_YEAR = 2000;
+    public static final String FILM_COUNTRY = "film country";
+    public static final String FILM_DESCRIPTION = "film description";
+    public static final String FILM_POSTER_URL = "http://film_poster";
+
+    public static Film film() {
+        Film film = new Film();
+        film.setTitle(FILM_TITLE);
+        film.setReleaseYear(RELEASE_YEAR);
+        film.setCountry(FILM_COUNTRY);
+        film.setDescription(FILM_DESCRIPTION);
+        film.setPosterUrl(FILM_POSTER_URL);
+        film.setGenres(testSetOf(Genre.ADVENTURE, Genre.ACTION));
+        return film;
+    }
+
+    public static Film loadedFilm() {
+        Film film = film();
+        film.setId(FILM_ID);
+        return film;
+    }
+
+    public static FilmRequest filmRequest() {
+        return new FilmRequest(
+                FILM_TITLE,
+                RELEASE_YEAR,
+                FILM_COUNTRY,
+                FILM_DESCRIPTION,
+                FILM_POSTER_URL,
+                testSetOf(Genre.ADVENTURE, Genre.ACTION),
+                null,
+                null
+        );
+    }
+
+    public static FilmRequest filmRequestFull() {
+        return new FilmRequest(
+                FILM_TITLE,
+                RELEASE_YEAR,
+                FILM_COUNTRY,
+                FILM_DESCRIPTION,
+                FILM_POSTER_URL,
+                testSetOf(Genre.ADVENTURE, Genre.ACTION),
+                testSetOf(actorRequest()),
+                testSetOf(directorRequest())
+        );
+    }
+
+    public static FilmRequest updateFilmRequest() {
+        return new FilmRequest(
+                "updated title",
+                1999,
+                "updated country",
+                FILM_DESCRIPTION,
+                FILM_POSTER_URL,
+                testSetOf(Genre.COMEDY),
+                null,
+                null
+        );
+    }
+
+    public static DetailedFilmResponse detailedFilmResponse() {
+        return new DetailedFilmResponse(
+                FILM_ID,
+                FILM_TITLE,
+                RELEASE_YEAR,
+                FILM_COUNTRY,
+                FILM_DESCRIPTION,
+                FILM_POSTER_URL,
+                testSetOf(Genre.ADVENTURE, Genre.ACTION),
+                testSetOf(),
+                testSetOf()
+        );
+    }
+
+    public static DetailedFilmResponse detailedFilmResponseFull() {
+        return new DetailedFilmResponse(
+                FILM_ID,
+                FILM_TITLE,
+                RELEASE_YEAR,
+                FILM_COUNTRY,
+                FILM_DESCRIPTION,
+                FILM_POSTER_URL,
+                testSetOf(Genre.ADVENTURE, Genre.ACTION),
+                testSetOf(actorResponse()),
+                testSetOf(directorResponse())
+        );
+    }
+
+    public static FilmResponse filmResponse() {
+        return new FilmResponse(
+                FILM_ID,
+                FILM_TITLE,
+                RELEASE_YEAR,
+                FILM_POSTER_URL
+        );
+    }
+}

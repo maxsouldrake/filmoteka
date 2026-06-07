@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 
-import static io.github.maxsouldrake.filmoteka.testdata.FilmTestData.*;
+import static io.github.maxsouldrake.filmoteka.film.FilmTestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 

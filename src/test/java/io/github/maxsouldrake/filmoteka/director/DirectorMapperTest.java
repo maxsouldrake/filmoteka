@@ -4,7 +4,7 @@ import io.github.maxsouldrake.filmoteka.director.dto.DirectorResponse;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import static io.github.maxsouldrake.filmoteka.testdata.DirectorTestData.*;
+import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DirectorMapperTest {

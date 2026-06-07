@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 
-import static io.github.maxsouldrake.filmoteka.testdata.DirectorTestData.DIRECTOR_NAME;
-import static io.github.maxsouldrake.filmoteka.testdata.DirectorTestData.director;
+import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.DIRECTOR_NAME;
+import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.director;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest

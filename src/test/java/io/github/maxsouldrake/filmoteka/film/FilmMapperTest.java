@@ -5,7 +5,7 @@ import io.github.maxsouldrake.filmoteka.film.dto.FilmResponse;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import static io.github.maxsouldrake.filmoteka.testdata.FilmTestData.*;
+import static io.github.maxsouldrake.filmoteka.film.FilmTestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FilmMapperTest {
@@ -13,8 +13,8 @@ class FilmMapperTest {
     private final FilmMapper filmMapper = Mappers.getMapper(FilmMapper.class);
 
     @Test
-    void shouldMapCreateFilmRequestToFilm() {
-        Film film = filmMapper.createFilmRequestToFilm(createFilmRequest());
+    void shouldMapFilmRequestToFilm() {
+        Film film = filmMapper.filmRequestToFilm(filmRequest());
 
         assertThat(film.getTitle()).isEqualTo(FILM_TITLE);
         assertThat(film.getReleaseYear()).isEqualTo(RELEASE_YEAR);
@@ -36,5 +36,18 @@ class FilmMapperTest {
         FilmResponse response = filmMapper.filmToFilmResponse(loadedFilm());
 
         assertThat(response).isEqualTo(filmResponse());
+    }
+
+    @Test
+    void shouldMapUpdateFilmRequestToFilm() {
+        Film film = loadedFilm();
+
+        filmMapper.updateFilmRequestToFilm(updateFilmRequest(), film);
+
+        assertThat(film.getTitle()).isEqualTo("updated title");
+        assertThat(film.getReleaseYear()).isEqualTo(1999);
+        assertThat(film.getCountry()).isEqualTo("updated country");
+        assertThat(film.getDescription()).isEqualTo(FILM_DESCRIPTION);
+        assertThat(film.getGenres()).containsExactlyInAnyOrder(Genre.COMEDY);
     }
 }

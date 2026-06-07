@@ -1,7 +1,7 @@
 package io.github.maxsouldrake.filmoteka.film;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.maxsouldrake.filmoteka.film.dto.CreateFilmRequest;
+import io.github.maxsouldrake.filmoteka.film.dto.FilmRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -12,9 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static io.github.maxsouldrake.filmoteka.testdata.ActorTestData.ACTOR_NAME;
-import static io.github.maxsouldrake.filmoteka.testdata.DirectorTestData.DIRECTOR_NAME;
-import static io.github.maxsouldrake.filmoteka.testdata.FilmTestData.*;
+import static io.github.maxsouldrake.filmoteka.actor.ActorTestData.ACTOR_NAME;
+import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.DIRECTOR_NAME;
+import static io.github.maxsouldrake.filmoteka.film.FilmTestData.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,12 +36,12 @@ class FilmControllerTest {
 
     @Test
     void shouldCreateFilm() throws Exception {
-        when(filmService.create(any(CreateFilmRequest.class))).thenReturn(detailedFilmResponseFull());
+        when(filmService.createFilm(any(FilmRequest.class))).thenReturn(detailedFilmResponseFull());
 
         mockMvc.perform(
                 post("/api/v1/films")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createFilmRequestFull()))
+                        .content(objectMapper.writeValueAsString(filmRequestFull()))
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(FILM_ID))
@@ -53,7 +53,7 @@ class FilmControllerTest {
                 .andExpect(jsonPath("$.actors[0].name").value(ACTOR_NAME))
                 .andExpect(jsonPath("$.directors[0].name").value(DIRECTOR_NAME));
 
-        verify(filmService).create(any(CreateFilmRequest.class));
+        verify(filmService).createFilm(any(FilmRequest.class));
     }
 
     @Test

@@ -1,43 +1,26 @@
 package io.github.maxsouldrake.filmoteka.actor;
 
+import io.github.maxsouldrake.filmoteka.common.BaseEntity;
 import io.github.maxsouldrake.filmoteka.film.Film;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "actor", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
-public class Actor {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Actor extends BaseEntity {
 
     private String name;
 
-    @CreationTimestamp
-    @Column(name = "created_ts", updatable = false)
-    private LocalDateTime createdTs;
-
-    @UpdateTimestamp
-    @Column(name = "updated_ts")
-    private LocalDateTime updatedTs;
-
     @ManyToMany(mappedBy = "actors")
-    @Builder.Default
     private Set<Film> films = new HashSet<>();
-
-    @PreUpdate
-    public void preUpdate() {
-        updatedTs = LocalDateTime.now();
-    }
 }

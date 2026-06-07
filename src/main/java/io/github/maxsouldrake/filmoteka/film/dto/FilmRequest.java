@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.URL;
 
 import java.util.Set;
 
-public record CreateFilmRequest(
+public record FilmRequest(
         @NotBlank
         @Size(max = 255)
         String title,

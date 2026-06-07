@@ -2,7 +2,7 @@ package io.github.maxsouldrake.filmoteka.film;
 
 import io.github.maxsouldrake.filmoteka.actor.ActorService;
 import io.github.maxsouldrake.filmoteka.director.DirectorService;
-import io.github.maxsouldrake.filmoteka.film.dto.CreateFilmRequest;
+import io.github.maxsouldrake.filmoteka.film.dto.FilmRequest;
 import io.github.maxsouldrake.filmoteka.film.dto.DetailedFilmResponse;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +31,9 @@ public class FilmService {
     }
 
     @Transactional
-    public DetailedFilmResponse create(CreateFilmRequest request) {
+    public DetailedFilmResponse createFilm(FilmRequest request) {
 
-        Film film = filmMapper.createFilmRequestToFilm(request);
+        Film film = filmMapper.filmRequestToFilm(request);
 
         request.actors().stream()
                 .map(actorService::findOrCreate)

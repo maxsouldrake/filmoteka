@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static io.github.maxsouldrake.filmoteka.testdata.ActorTestData.actorRequest;
-import static io.github.maxsouldrake.filmoteka.testdata.ActorTestData.loadedActor;
-import static io.github.maxsouldrake.filmoteka.testdata.DirectorTestData.directorRequest;
-import static io.github.maxsouldrake.filmoteka.testdata.DirectorTestData.loadedDirector;
-import static io.github.maxsouldrake.filmoteka.testdata.FilmTestData.*;
+import static io.github.maxsouldrake.filmoteka.actor.ActorTestData.actorRequest;
+import static io.github.maxsouldrake.filmoteka.actor.ActorTestData.loadedActor;
+import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.directorRequest;
+import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.loadedDirector;
+import static io.github.maxsouldrake.filmoteka.film.FilmTestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,23 +43,23 @@ class FilmServiceTest {
     private FilmService filmService;
 
     @Test
-    void shouldCreateFilm() {
+    void shouldCreateFilmFilm() {
         Film film = film();
         Film loadedFilm = loadedFilm();
         loadedFilm.addActor(loadedActor());
         loadedFilm.addDirector(loadedDirector());
 
-        when(filmMapper.createFilmRequestToFilm(createFilmRequestFull())).thenReturn(film);
+        when(filmMapper.filmRequestToFilm(filmRequestFull())).thenReturn(film);
         when(actorService.findOrCreate(actorRequest())).thenReturn(loadedActor());
         when(directorService.findOrCreate(directorRequest())).thenReturn(loadedDirector());
         when(filmMapper.filmToDetailedFilmResponse(loadedFilm)).thenReturn(detailedFilmResponseFull());
         when(filmRepository.save(any(Film.class))).thenReturn(loadedFilm);
 
-        DetailedFilmResponse response = filmService.create(createFilmRequestFull());
+        DetailedFilmResponse response = filmService.createFilm(filmRequestFull());
 
         assertThat(response).isEqualTo(detailedFilmResponseFull());
 
-        verify(filmMapper).createFilmRequestToFilm(createFilmRequestFull());
+        verify(filmMapper).filmRequestToFilm(filmRequestFull());
         verify(actorService).findOrCreate(actorRequest());
         verify(directorService).findOrCreate(directorRequest());
         verify(filmRepository).save(film);
@@ -98,7 +98,6 @@ class FilmServiceTest {
 
         List<FilmResponse> response = filmService.findAll();
 
-        assertThat(response).hasSize(1);
         assertThat(response).containsExactly(filmResponse());
 
         verify(filmRepository).findAll();

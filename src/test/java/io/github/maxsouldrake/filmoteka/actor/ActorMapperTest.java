@@ -4,7 +4,7 @@ import io.github.maxsouldrake.filmoteka.actor.dto.ActorResponse;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import static io.github.maxsouldrake.filmoteka.testdata.ActorTestData.*;
+import static io.github.maxsouldrake.filmoteka.actor.ActorTestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 

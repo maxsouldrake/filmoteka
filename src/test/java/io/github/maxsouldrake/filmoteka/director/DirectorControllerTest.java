@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.NoSuchElementException;
 
-import static io.github.maxsouldrake.filmoteka.testdata.DirectorTestData.*;
+import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
