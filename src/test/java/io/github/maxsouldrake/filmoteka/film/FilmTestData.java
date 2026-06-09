@@ -1,6 +1,7 @@
 package io.github.maxsouldrake.filmoteka.film;
 
 import io.github.maxsouldrake.filmoteka.film.dto.DetailedFilmResponse;
+import io.github.maxsouldrake.filmoteka.film.dto.FilmFilter;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmRequest;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmResponse;
 
@@ -110,5 +111,18 @@ public class FilmTestData {
                 RELEASE_YEAR,
                 FILM_POSTER_URL
         );
+    }
+
+    public static FilmFilter filmFilter() {
+        return new FilmFilter(
+                FILM_TITLE,
+                RELEASE_YEAR,
+                RELEASE_YEAR + 10,
+                testSetOf(Genre.ADVENTURE, Genre.ACTION),
+                FILM_COUNTRY);
+    }
+
+    public static FilmFilter emptyFilmFilter() {
+        return new FilmFilter(null, null, null, null, null);
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import java.util.Optional;
 
 import static io.github.maxsouldrake.filmoteka.film.FilmTestData.*;
+import static io.github.maxsouldrake.filmoteka.util.TestUtil.testSetOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,16 +40,22 @@ class FilmRepositoryTest {
     }
 
     @Test
-    void shouldFindPagedFilmsByTitle() {
+    void shouldFindPagedFilmsByFilter() {
         Film nonComplFilm = film();
         nonComplFilm.setTitle("different title");
+        nonComplFilm.setReleaseYear(1999);
+        nonComplFilm.setCountry("different country");
+        nonComplFilm.setGenres(testSetOf(Genre.CRIME));
         filmRepository.saveAndFlush(nonComplFilm);
         filmRepository.saveAndFlush(film());
 
         Pageable pageable = PageRequest.of(0, 100);
-        Page<Film> page = filmRepository.findByTitleContainingIgnoreCase("Film", pageable);
+        Page<Film> page = filmRepository.findAll(FilmSpecification.withFilters(filmFilter()), pageable);
 
-        assertThat(page.getContent()).extracting(Film::getTitle).containsExactlyInAnyOrder("film title");
+        assertThat(page.getContent()).extracting(Film::getTitle).containsExactlyInAnyOrder(FILM_TITLE);
+        assertThat(page.getContent()).extracting(Film::getReleaseYear).containsExactlyInAnyOrder(RELEASE_YEAR);
+        assertThat(page.getContent()).extracting(Film::getCountry).containsExactlyInAnyOrder(FILM_COUNTRY);
+        assertThat(page.getContent()).extracting(Film::getGenres).containsExactlyInAnyOrder(testSetOf(Genre.ADVENTURE, Genre.ACTION));
     }
 
     @Test
@@ -64,10 +71,10 @@ class FilmRepositoryTest {
         filmRepository.saveAndFlush(filmB);
         filmRepository.saveAndFlush(filmA);
 
-        Page<Film> result = filmRepository.findAll(
+        Page<Film> page = filmRepository.findAll(FilmSpecification.hasTitle(null),
                 PageRequest.of(0, 100, Sort.by("title").ascending()));
 
-        assertThat(result.getContent())
+        assertThat(page.getContent())
                 .extracting(Film::getTitle)
                 .containsExactly("A", "B", "C");
     }

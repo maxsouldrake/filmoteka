@@ -4,11 +4,13 @@ import io.github.maxsouldrake.filmoteka.actor.ActorService;
 import io.github.maxsouldrake.filmoteka.common.PageResponse;
 import io.github.maxsouldrake.filmoteka.director.DirectorService;
 import io.github.maxsouldrake.filmoteka.film.dto.DetailedFilmResponse;
+import io.github.maxsouldrake.filmoteka.film.dto.FilmFilter;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmRequest;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +26,9 @@ public class FilmService {
     private final DirectorService directorService;
     private final FilmMapper filmMapper;
 
-    public PageResponse<FilmResponse> getFilms(String title, Pageable pageable) {
-        Page<Film> page = title == null || title.isBlank()
-                ? filmRepository.findAll(pageable)
-                : filmRepository.findByTitleContainingIgnoreCase(title, pageable);
+    public PageResponse<FilmResponse> getFilms(FilmFilter filter, Pageable pageable) {
+        Specification<Film> specification = FilmSpecification.withFilters(filter);
+        Page<Film> page = filmRepository.findAll(specification, pageable);
         List<FilmResponse> content = filmMapper.filmsToFilmResponses(page.getContent());
 
         return new PageResponse<>(

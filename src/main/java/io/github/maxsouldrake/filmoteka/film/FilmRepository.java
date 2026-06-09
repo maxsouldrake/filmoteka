@@ -1,9 +1,7 @@
 package io.github.maxsouldrake.filmoteka.film;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface FilmRepository extends JpaRepository<Film, Long> {
-    Page<Film> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+public interface FilmRepository extends JpaRepository<Film, Long>, JpaSpecificationExecutor<Film> {
 }

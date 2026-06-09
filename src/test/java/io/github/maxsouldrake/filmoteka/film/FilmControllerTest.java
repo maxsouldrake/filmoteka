@@ -1,6 +1,7 @@
 package io.github.maxsouldrake.filmoteka.film;
 
 import io.github.maxsouldrake.filmoteka.common.PageResponse;
+import io.github.maxsouldrake.filmoteka.film.dto.FilmFilter;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmRequest;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmResponse;
 import org.junit.jupiter.api.Test;
@@ -77,10 +78,10 @@ class FilmControllerTest {
     }
 
     @Test
-    void shouldReturnPagedFilms() throws Exception {
+    void shouldReturnPagedFilmsUnfiltered() throws Exception {
         PageResponse<FilmResponse> response =
                 new PageResponse<>(List.of(filmResponse()), 0, 100, 1, 1);
-        when(filmService.getFilms(eq(null), any())).thenReturn(response);
+        when(filmService.getFilms(eq(emptyFilmFilter()), any())).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/films"))
                 .andExpect(status().isOk())
@@ -89,34 +90,39 @@ class FilmControllerTest {
                 .andExpect(jsonPath("$.content[0].title").value(FILM_TITLE))
                 .andExpect(jsonPath("$.content[0].id").value(FILM_ID));
 
-        verify(filmService).getFilms(eq(null), any());
+        verify(filmService).getFilms(eq(emptyFilmFilter()), any());
     }
 
     @Test
     void shouldReturnPagedEmptyList() throws Exception {
         PageResponse<FilmResponse> response =
                 new PageResponse<>(List.of(), 0, 100, 0, 1);
-        when(filmService.getFilms(eq(null), any())).thenReturn(response);
+        when(filmService.getFilms(any(FilmFilter.class), any())).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/films"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isEmpty())
                 .andExpect(jsonPath("$.totalElements").value(0));
 
-        verify(filmService).getFilms(eq(null), any());
+        verify(filmService).getFilms(any(FilmFilter.class), any());
     }
 
     @Test
-    void shouldReturnPagedFilmsByTitle() throws Exception {
+    void shouldReturnPagedFilmsFiltered() throws Exception {
         PageResponse<FilmResponse> response =
                 new PageResponse<>(List.of(filmResponse()), 0, 100, 1, 1);
-        when(filmService.getFilms(eq("film"), any())).thenReturn(response);
+        when(filmService.getFilms(eq(filmFilter()), any())).thenReturn(response);
 
-        mockMvc.perform(get("/api/v1/films").param("title", "film"))
+        mockMvc.perform(get("/api/v1/films")
+                        .param("title", "film title")
+                        .param("yearFrom", "2000")
+                        .param("yearTo", "2010")
+                        .param("country", "film country")
+                        .param("genre", "ACTION", "ADVENTURE"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].title").value(FILM_TITLE));
 
-        verify(filmService).getFilms(eq("film"), any());
+        verify(filmService).getFilms(any(FilmFilter.class), any());
     }
 
     @Test

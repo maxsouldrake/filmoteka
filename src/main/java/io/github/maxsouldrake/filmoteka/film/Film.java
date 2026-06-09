@@ -28,8 +28,13 @@ public class Film extends BaseEntity {
 
     private String country;
 
+    @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(100)[]")
+    @CollectionTable(
+            name = "film_genres",
+            joinColumns = @JoinColumn(name = "film_id")
+    )
+    @Column(name = "genre")
     private Set<Genre> genres = new HashSet<>();
 
     @Column(columnDefinition = "text")

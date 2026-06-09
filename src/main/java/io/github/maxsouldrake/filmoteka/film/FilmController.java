@@ -2,6 +2,7 @@ package io.github.maxsouldrake.filmoteka.film;
 
 import io.github.maxsouldrake.filmoteka.common.PageResponse;
 import io.github.maxsouldrake.filmoteka.film.dto.DetailedFilmResponse;
+import io.github.maxsouldrake.filmoteka.film.dto.FilmFilter;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmRequest;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmResponse;
 import jakarta.validation.Valid;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("api/v1/films")
 @RequiredArgsConstructor
@@ -21,13 +24,19 @@ public class FilmController {
 
     @GetMapping
     public ResponseEntity<PageResponse<FilmResponse>> getFilms(
-            @RequestParam(required = false) String title, Pageable pageable) {
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String country,
+            @RequestParam(required = false) Integer yearFrom,
+            @RequestParam(required = false) Integer yearTo,
+            @RequestParam(required = false) Set<Genre> genre,
+            Pageable pageable) {
         Pageable fixedPageable = PageRequest.of(
                 Math.max(pageable.getPageNumber(), 0),
                 100,
                 pageable.getSort());
+        FilmFilter filter = new FilmFilter(title, yearFrom, yearTo, genre, country);
 
-        PageResponse<FilmResponse> response = filmService.getFilms(title, fixedPageable);
+        PageResponse<FilmResponse> response = filmService.getFilms(filter, fixedPageable);
 
         return ResponseEntity.ok(response);
     }
