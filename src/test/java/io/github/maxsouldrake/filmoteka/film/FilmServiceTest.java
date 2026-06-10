@@ -2,6 +2,8 @@ package io.github.maxsouldrake.filmoteka.film;
 
 import io.github.maxsouldrake.filmoteka.actor.ActorService;
 import io.github.maxsouldrake.filmoteka.common.PageResponse;
+import io.github.maxsouldrake.filmoteka.common.exception.ConflictException;
+import io.github.maxsouldrake.filmoteka.common.exception.ResourceNotFoundException;
 import io.github.maxsouldrake.filmoteka.director.DirectorService;
 import io.github.maxsouldrake.filmoteka.film.dto.DetailedFilmResponse;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmRequest;
@@ -21,7 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static io.github.maxsouldrake.filmoteka.actor.ActorTestData.actorRequest;
@@ -77,6 +78,16 @@ class FilmServiceTest {
     }
 
     @Test
+    void shouldThrowOnCreateIfConflict() {
+        when(filmRepository.existsByTitleAndReleaseYear(anyString(), anyInt())).thenReturn(true);
+        FilmRequest request = filmRequestFull();
+        assertThrows(ConflictException.class, () -> filmService.createFilm(request));
+
+        verify(filmRepository).existsByTitleAndReleaseYear(anyString(), anyInt());
+        verifyNoInteractions(filmMapper);
+    }
+
+    @Test
     void shouldFindFilmByIdIfExists() {
         Film loadedFilm = loadedFilm();
 
@@ -94,7 +105,7 @@ class FilmServiceTest {
     void shouldThrowIfDoesNotExist() {
         when(filmRepository.findById(FILM_ID)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> filmService.findById(FILM_ID));
+        assertThrows(ResourceNotFoundException.class, () -> filmService.findById(FILM_ID));
 
         verify(filmRepository).findById(FILM_ID);
         verifyNoInteractions(filmMapper);

@@ -50,6 +50,19 @@ public class FilmTestData {
         );
     }
 
+    public static FilmRequest invalidFilmRequest() {
+        return new FilmRequest(
+                "",
+                1700,
+                "",
+                "",
+                "url",
+                testSetOf(),
+                testSetOf(),
+                testSetOf()
+        );
+    }
+
     public static FilmRequest filmRequestFull() {
         return new FilmRequest(
                 FILM_TITLE,

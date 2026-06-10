@@ -1,14 +1,13 @@
 package io.github.maxsouldrake.filmoteka.actor;
 
 import io.github.maxsouldrake.filmoteka.actor.dto.ActorRequest;
+import io.github.maxsouldrake.filmoteka.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.NoSuchElementException;
 
 import static io.github.maxsouldrake.filmoteka.actor.ActorTestData.*;
 import static io.github.maxsouldrake.filmoteka.util.TestUtil.OBJECT_MAPPER;
@@ -43,9 +42,9 @@ class ActorControllerTest {
 
     @Test
     void shouldThrowIfActorNotFound() throws Exception {
-        when(actorService.findById(ACTOR_ID)).thenThrow(new NoSuchElementException());
+        when(actorService.findById(ACTOR_ID)).thenThrow(new ResourceNotFoundException("not found"));
 
-        mockMvc.perform(get("/actors/{id}", ACTOR_ID)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/v1/actors/{id}", ACTOR_ID)).andExpect(status().isNotFound());
     }
 
     @Test

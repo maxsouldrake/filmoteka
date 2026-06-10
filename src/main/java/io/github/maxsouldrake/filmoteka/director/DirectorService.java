@@ -1,5 +1,6 @@
 package io.github.maxsouldrake.filmoteka.director;
 
+import io.github.maxsouldrake.filmoteka.common.exception.ResourceNotFoundException;
 import io.github.maxsouldrake.filmoteka.director.dto.DetailedDirectorResponse;
 import io.github.maxsouldrake.filmoteka.director.dto.DirectorRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class DirectorService {
     private final DirectorMapper directorMapper;
 
     public DetailedDirectorResponse findById(Long id) {
-        Director director = directorRepository.findById(id).orElseThrow();
+        Director director = getDirectorOrThrow(id);
         return directorMapper.directorToDetailedDirectorResponse(director);
     }
 
@@ -28,7 +29,7 @@ public class DirectorService {
 
     @Transactional
     public DetailedDirectorResponse updateDirector(Long id, DirectorRequest request) {
-        Director director = directorRepository.findById(id).orElseThrow();
+        Director director = getDirectorOrThrow(id);
         directorMapper.updateDirectorRequestToDirector(request, director);
 
         Director saved = directorRepository.save(director);
@@ -38,8 +39,13 @@ public class DirectorService {
 
     @Transactional
     public void deleteDirector(Long id) {
-        Director director = directorRepository.findById(id).orElseThrow();
+        Director director = getDirectorOrThrow(id);
         director.getFilms().forEach(film -> film.removeDirector(director));
         directorRepository.delete(director);
+    }
+
+    private Director getDirectorOrThrow(Long id) {
+        return directorRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Director with id " + id + " not found"));
     }
 }

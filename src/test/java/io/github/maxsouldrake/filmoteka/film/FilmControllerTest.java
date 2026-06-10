@@ -1,6 +1,9 @@
 package io.github.maxsouldrake.filmoteka.film;
 
 import io.github.maxsouldrake.filmoteka.common.PageResponse;
+import io.github.maxsouldrake.filmoteka.common.exception.ConflictException;
+import io.github.maxsouldrake.filmoteka.common.exception.ErrorCode;
+import io.github.maxsouldrake.filmoteka.common.exception.ResourceNotFoundException;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmFilter;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmRequest;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmResponse;
@@ -12,12 +15,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static io.github.maxsouldrake.filmoteka.actor.ActorTestData.ACTOR_NAME;
 import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.DIRECTOR_NAME;
 import static io.github.maxsouldrake.filmoteka.film.FilmTestData.*;
+import static io.github.maxsouldrake.filmoteka.film.FilmTestData.invalidFilmRequest;
 import static io.github.maxsouldrake.filmoteka.util.TestUtil.OBJECT_MAPPER;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -39,8 +43,7 @@ class FilmControllerTest {
     void shouldCreateFilm() throws Exception {
         when(filmService.createFilm(any(FilmRequest.class))).thenReturn(detailedFilmResponseFull());
 
-        mockMvc.perform(
-                post("/api/v1/films")
+        mockMvc.perform(post("/api/v1/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(OBJECT_MAPPER.writeValueAsString(filmRequestFull()))
                 )
@@ -58,6 +61,42 @@ class FilmControllerTest {
     }
 
     @Test
+    void shouldThrowOnCreateIfConflict() throws Exception {
+        String message = String.format("Film with title '%s' and release year '%s' already exists",
+                FILM_TITLE, RELEASE_YEAR);
+        when(filmService.createFilm(any(FilmRequest.class))).thenThrow(new ConflictException(message));
+
+        mockMvc.perform(post("/api/v1/films")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(OBJECT_MAPPER.writeValueAsString(filmRequestFull()))
+                )
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(message))
+                .andExpect(jsonPath("$.code").value(ErrorCode.CONFLICT.name()));
+
+    }
+
+    @Test
+    void shouldThrowOnCreateIfInvalidRequest() throws Exception {
+        mockMvc.perform(post("/api/v1/films")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(OBJECT_MAPPER.writeValueAsString(invalidFilmRequest()))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value(ErrorCode.VALIDATION_FAILED.name()))
+                .andExpect(jsonPath("$.validationErrors[*].field",
+                        containsInAnyOrder(
+                                "title",
+                                "releaseYear",
+                                "country",
+                                "description",
+                                "posterUrl",
+                                "genres",
+                                "actors",
+                                "directors")));
+    }
+
+    @Test
     void shouldFindFilmById() throws Exception {
         when(filmService.findById(FILM_ID)).thenReturn(detailedFilmResponseFull());
 
@@ -72,9 +111,13 @@ class FilmControllerTest {
 
     @Test
     void shouldThrowIfFilmNotFound() throws Exception {
-        when(filmService.findById(FILM_ID)).thenThrow(new NoSuchElementException());
+        String message = "Film with id " + FILM_ID + " not found";
+        when(filmService.findById(FILM_ID)).thenThrow(new ResourceNotFoundException(message));
 
-        mockMvc.perform(get("/films/{id}", FILM_ID)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/v1/films/{id}", FILM_ID))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value(message))
+                .andExpect(jsonPath("$.code").value(ErrorCode.NOT_FOUND.name()));
     }
 
     @Test

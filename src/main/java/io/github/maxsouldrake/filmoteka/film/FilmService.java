@@ -2,6 +2,8 @@ package io.github.maxsouldrake.filmoteka.film;
 
 import io.github.maxsouldrake.filmoteka.actor.ActorService;
 import io.github.maxsouldrake.filmoteka.common.PageResponse;
+import io.github.maxsouldrake.filmoteka.common.exception.ConflictException;
+import io.github.maxsouldrake.filmoteka.common.exception.ResourceNotFoundException;
 import io.github.maxsouldrake.filmoteka.director.DirectorService;
 import io.github.maxsouldrake.filmoteka.film.dto.DetailedFilmResponse;
 import io.github.maxsouldrake.filmoteka.film.dto.FilmFilter;
@@ -32,21 +34,21 @@ public class FilmService {
         List<FilmResponse> content = filmMapper.filmsToFilmResponses(page.getContent());
 
         return new PageResponse<>(
-                content,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
+                content, page.getNumber(), page.getSize(), page.getTotalElements(), page.getTotalPages()
         );
     }
 
     public DetailedFilmResponse findById(Long id) {
-        Film film = filmRepository.findById(id).orElseThrow();
+        Film film = getFilmOrThrow(id);
         return filmMapper.filmToDetailedFilmResponse(film);
     }
 
     @Transactional
     public DetailedFilmResponse createFilm(FilmRequest request) {
+        if (filmRepository.existsByTitleAndReleaseYear(request.title(), request.releaseYear())) {
+            throw new ConflictException(String.format("Film with title '%s' and release year '%s' already exists",
+                    request.title(), request.releaseYear()));
+        }
 
         Film film = filmMapper.filmRequestToFilm(request);
 
@@ -64,7 +66,7 @@ public class FilmService {
 
     @Transactional
     public DetailedFilmResponse updateFilm(Long id, FilmRequest request) {
-        Film film = filmRepository.findById(id).orElseThrow();
+        Film film = getFilmOrThrow(id);
         filmMapper.updateFilmRequestToFilm(request, film);
 
         film.getActors().clear();
@@ -85,5 +87,10 @@ public class FilmService {
     @Transactional
     public void deleteFilm(Long id) {
         filmRepository.deleteById(id);
+    }
+
+    private Film getFilmOrThrow(Long id) {
+        return filmRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Film with id " + id + " not found"));
     }
 }

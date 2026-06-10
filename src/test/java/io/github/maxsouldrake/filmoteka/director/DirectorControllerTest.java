@@ -1,5 +1,6 @@
 package io.github.maxsouldrake.filmoteka.director;
 
+import io.github.maxsouldrake.filmoteka.common.exception.ResourceNotFoundException;
 import io.github.maxsouldrake.filmoteka.director.dto.DirectorRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +8,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.NoSuchElementException;
 
 import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.*;
 import static io.github.maxsouldrake.filmoteka.util.TestUtil.OBJECT_MAPPER;
@@ -43,9 +42,9 @@ class DirectorControllerTest {
 
     @Test
     void shouldThrowIfDirectorNotFound() throws Exception {
-        when(directorService.findById(DIRECTOR_ID)).thenThrow(new NoSuchElementException());
+        when(directorService.findById(DIRECTOR_ID)).thenThrow(new ResourceNotFoundException("not found"));
 
-        mockMvc.perform(get("/directors/{id}", DIRECTOR_ID)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/v1/directors/{id}", DIRECTOR_ID)).andExpect(status().isNotFound());
     }
 
     @Test

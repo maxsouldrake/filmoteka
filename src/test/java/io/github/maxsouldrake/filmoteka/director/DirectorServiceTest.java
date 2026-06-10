@@ -1,5 +1,6 @@
 package io.github.maxsouldrake.filmoteka.director;
 
+import io.github.maxsouldrake.filmoteka.common.exception.ResourceNotFoundException;
 import io.github.maxsouldrake.filmoteka.director.dto.DetailedDirectorResponse;
 import io.github.maxsouldrake.filmoteka.director.dto.DirectorRequest;
 import io.github.maxsouldrake.filmoteka.film.Film;
@@ -11,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static io.github.maxsouldrake.filmoteka.director.DirectorTestData.*;
@@ -73,7 +73,7 @@ class DirectorServiceTest {
     void shouldThrowIfDoesNotExist() {
         when(directorRepository.findById(DIRECTOR_ID)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> directorService.findById(DIRECTOR_ID));
+        assertThrows(ResourceNotFoundException.class, () -> directorService.findById(DIRECTOR_ID));
 
         verify(directorRepository).findById(DIRECTOR_ID);
         verifyNoInteractions(directorMapper);

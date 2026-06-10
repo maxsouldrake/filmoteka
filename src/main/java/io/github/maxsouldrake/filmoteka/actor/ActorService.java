@@ -2,6 +2,7 @@ package io.github.maxsouldrake.filmoteka.actor;
 
 import io.github.maxsouldrake.filmoteka.actor.dto.ActorRequest;
 import io.github.maxsouldrake.filmoteka.actor.dto.DetailedActorResponse;
+import io.github.maxsouldrake.filmoteka.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,7 @@ public class ActorService {
     private final ActorMapper actorMapper;
 
     public DetailedActorResponse findById(Long id) {
-        Actor actor = actorRepository.findById(id).orElseThrow();
+        Actor actor = getActorOrThrow(id);
         return actorMapper.actorToDetailedActorResponse(actor);
     }
 
@@ -28,7 +29,7 @@ public class ActorService {
 
     @Transactional
     public DetailedActorResponse updateActor(Long id, ActorRequest request) {
-        Actor actor = actorRepository.findById(id).orElseThrow();
+        Actor actor = getActorOrThrow(id);
         actorMapper.updateActorRequestToActor(request, actor);
 
         Actor saved = actorRepository.save(actor);
@@ -38,8 +39,13 @@ public class ActorService {
 
     @Transactional
     public void deleteActor(Long id) {
-        Actor actor = actorRepository.findById(id).orElseThrow();
+        Actor actor = getActorOrThrow(id);
         actor.getFilms().forEach(film -> film.removeActor(actor));
         actorRepository.delete(actor);
+    }
+
+    private Actor getActorOrThrow(Long id) {
+        return actorRepository.findById(id).orElseThrow(() ->
+                        new ResourceNotFoundException("Actor with id " + id + " not found"));
     }
 }

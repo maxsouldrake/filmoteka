@@ -2,6 +2,7 @@ package io.github.maxsouldrake.filmoteka.actor;
 
 import io.github.maxsouldrake.filmoteka.actor.dto.ActorRequest;
 import io.github.maxsouldrake.filmoteka.actor.dto.DetailedActorResponse;
+import io.github.maxsouldrake.filmoteka.common.exception.ResourceNotFoundException;
 import io.github.maxsouldrake.filmoteka.film.Film;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static io.github.maxsouldrake.filmoteka.actor.ActorTestData.*;
@@ -71,7 +71,7 @@ class ActorServiceTest {
     void shouldThrowIfDoesNotExist() {
         when(actorRepository.findById(ACTOR_ID)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> actorService.findById(ACTOR_ID));
+        assertThrows(ResourceNotFoundException.class, () -> actorService.findById(ACTOR_ID));
 
         verify(actorRepository).findById(ACTOR_ID);
         verifyNoInteractions(actorMapper);
